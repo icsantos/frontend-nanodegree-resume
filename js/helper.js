@@ -153,12 +153,20 @@ function initializeMap() {
     var lon = placeData.geometry.location.lng();  // longitude from the place service
     var name = placeData.formatted_address;   // name of the place from the place service
     var bounds = window.mapBounds;            // current boundaries of the map window
+    
+    var image = 'images/red-pushpin.png';
+    if (placeData.formatted_address.indexOf('Philippines') > -1) {
+      image = 'images/Philippines48.png';
+    } else if (placeData.formatted_address.indexOf('USA') > -1) {
+      image = 'images/United-States48.png';
+    }
 
     // marker is an object with additional data about the pin for a single location
     var marker = new google.maps.Marker({
       map: map,
       position: placeData.geometry.location,
-      title: name
+      title: name,
+      icon: image
     });
 
     // infoWindows are the little helper windows that open when you click
