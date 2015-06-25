@@ -129,7 +129,6 @@ var projects = {
       "description" : "Replicate a design mockup in a responsive website using HTML5 and CSS3.",
       "url" : "https://github.com/icsantos/FEND-build-a-portfolio",
       "images" : [
-        "images/fend1_nexus5.jpg",
         "images/fend1_laptop.jpg"
       ]
     }, {
@@ -194,8 +193,6 @@ function editImage(imgClass, imgText, image_arr, width_arr) {
     pos = imgText.indexOf('src="%data%"');
     imgText = imgText.slice(0, pos) + srcset + imgText.slice(pos);
   }
-  //pos = imgText.indexOf(' ');
-  //imgText = imgText.slice(0, pos) + ' class="' + imgClass + '"' + imgText.slice(pos);
   imgText = imgText.replace("%data%", image_arr[0]);
   return imgText;
 }
@@ -293,8 +290,9 @@ projects.display = function () {
     $(".project-entry:last").append(HTMLprojectDescription.replace("%data%", projects.projects[project].description));
 
     if (projects.projects[project].images.length > 0) {
-      var projImage = editImage("project-image", HTMLprojectImage, projects.projects[project].images, ['400w', '800w']);
-       $(".project-entry:last").append(projImage);
+      for (image in projects.projects[project].images) {
+        $(".project-entry:last").append(HTMLprojectImage.replace("%data%", projects.projects[project].images[image]));
+      }
     }
   }
 };
