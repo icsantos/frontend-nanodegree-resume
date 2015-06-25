@@ -154,12 +154,11 @@ function initializeMap() {
     var name = placeData.formatted_address;   // name of the place from the place service
     var bounds = window.mapBounds;            // current boundaries of the map window
     
-    var image = 'images/red-pushpin.png';
-    if (placeData.formatted_address.indexOf('Philippines') > -1) {
-      image = 'images/Philippines48.png';
-    } else if (placeData.formatted_address.indexOf('USA') > -1) {
-      image = 'images/United-States48.png';
-    }
+    var country = $.trim(placeData.formatted_address.split(',').pop());
+    var image = 'images/icon_' + country + '.png';
+    $.get(image).fail(function() {
+      image = 'images/orange-dot.png';
+    })
 
     // marker is an object with additional data about the pin for a single location
     var marker = new google.maps.Marker({

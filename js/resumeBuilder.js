@@ -1,5 +1,4 @@
 
-
 var bio = {
   "name" : "Imelda Santos",
   "role" : "Web Developer",
@@ -131,7 +130,8 @@ var projects = {
       "description" : "Replicate a design mockup in a responsive website using HTML5 and CSS3.",
       "url" : "https://github.com/icsantos/FEND-build-a-portfolio",
       "images" : [
-        "https://raw.githubusercontent.com/icsantos/FEND-build-a-portfolio/master/screenshots/laptop.jpg"
+        "images/fend1_laptop.jpg",
+        "images/fend1_nexus5.jpg"
       ]
     }, {
       "title" : "Front-End Nanodegree Project 2: Online Resume",
@@ -148,7 +148,7 @@ function inName(name) {
   names[0] = names[0].slice(0, 1).toUpperCase() + names[0].slice(1).toLowerCase();
   names[1] = names[1].toUpperCase();
   return names.join(" ");
-};
+}
 
 function locationizer(work_obj) {
   var locations = [];
@@ -158,31 +158,76 @@ function locationizer(work_obj) {
   return locations;
 }
 
+function editContact(pText, pHTMLentity) {
+  var iconSpan = '<span class="orange-text contact-icon">' + pHTMLentity + '</span>';
+  var pos = pText.indexOf('<span class="orange-text">');
+  pText = pText.replace('orange-text', 'orange-text contact-text');
+  return pText.slice(0, pos) + iconSpan + pText.slice(pos);
+}
+
+function editContact2(pText, pHTMLentity) {
+  var iconSpan = '<span class="orange-text contact-icon">' + pHTMLentity + '</span>';
+  var pos = pText.indexOf('<span class="orange-text">');
+  pText = pText.replace('orange-text', 'orange-text contact-text');
+  return pText.slice(0, pos) + iconSpan + pText.slice(pos);
+}
+
+function makeFigure(images_arr) {
+  var figure = '';
+  return figure;
+}
+
+var icomoon = {
+  "contacts" : {
+    "generic" : "&#xe972;",
+    "mobile" : "&#xe958;",
+    "email" : "&#xea84;",
+    "github" : "&#xeab1;",
+    "twitter" : "&#xea91;",
+    "location" : "&#xe948;",
+    "blog" : "&#xeaba;"
+  }
+}
+
 bio.display = function () {
   $("#topContacts").before(HTMLheaderName.replace("%data%", bio.name));
   $("#topContacts").before(HTMLheaderRole.replace("%data%", bio.role));
   if (bio.contacts) {
     var contacts = bio.contacts;
     if (contacts.generic) {
-      $("#topContacts, #footerContacts").append(HTMLcontactGeneric.replace("%data%", contacts.generic));
+      contactGeneric = HTMLcontactGeneric.replace("%data%", contacts.generic);
+      contactGeneric = editContact(contactGeneric, '&#xe972;');
+      $("#topContacts, #footerContacts").append(contactGeneric);
     }
     if (contacts.mobile) {
-      $("#topContacts, #footerContacts").append(HTMLmobile.replace("%data%", contacts.mobile));
+      contactMobile = HTMLmobile.replace("%data%", contacts.mobile);
+      contactMobile = editContact(contactMobile, '&#xe958;');
+      $("#topContacts, #footerContacts").append(contactMobile);
     }
     if (contacts.email) {
-      $("#topContacts, #footerContacts").append(HTMLemail.replace("%data%", contacts.email));
+      var contactEmail = HTMLemail.replace("%data%", contacts.email);
+      contactEmail = editContact(contactEmail, '&#xea84;');
+      $("#topContacts, #footerContacts").append(contactEmail);
     }
     if (contacts.github) {
-      $("#topContacts, #footerContacts").append(HTMLgithub.replace("%data%", contacts.github));
+      var contactGithub = HTMLgithub.replace("%data%", contacts.github);
+      contactGithub = editContact(contactGithub, '&#xeab1;');
+      $("#topContacts, #footerContacts").append(contactGithub);
     }
     if (contacts.twitter) {
-      $("#topContacts, #footerContacts").append(HTMLtwitter.replace("%data%", contacts.twitter));
+      var contactTwitter = HTMLtwitter.replace("%data%", contacts.twitter);
+      contactTwitter = editContact(contactTwitter, '&#xea91;');
+      $("#topContacts, #footerContacts").append(contactTwitter);
     }
     if (contacts.location) {
-      $("#topContacts, #footerContacts").append(HTMLlocation.replace("%data%", contacts.location));
+      var contactLocation = HTMLlocation.replace("%data%", contacts.location);
+      contactLocation = editContact(contactLocation, '&#xe948;');
+      $("#topContacts, #footerContacts").append(contactLocation);
     }
     if (contacts.blog) {
-      $("#topContacts, #footerContacts").append(HTMLblog.replace("%data%", contacts.blog));
+      var contactBlog = HTMLblog.replace("%data%", contacts.blog);
+      contactBlog = editContact(contactBlog, '&#xeaba;');
+      $("#topContacts, #footerContacts").append(contactBlog);
     }
   }
   $("#header").append(HTMLbioPic.replace("%data%", bio.biopic));
@@ -217,7 +262,7 @@ education.display = function () {
       var formattedTitle = HTMLonlineTitle.replace("%data%", education.onlineCourses[course].title);
       formattedTitle = formattedTitle.replace("#", education.onlineCourses[course].url);
       var formattedSchool = HTMLonlineSchool.replace("%data%", education.onlineCourses[course].school);
-      
+
       $("#education").append(HTMLschoolStart);
       $(".education-entry:last").append(formattedTitle + formattedSchool);
       $(".education-entry:last").append(HTMLonlineDates.replace("%data%", education.onlineCourses[course].dates));
