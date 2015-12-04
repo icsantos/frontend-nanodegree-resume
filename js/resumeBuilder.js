@@ -1,25 +1,95 @@
-var bio = {
-    name: 'Imelda Santos',
-    role: 'Web Developer',
-    contacts: {
-        mobile: '636-555-5555',
-        email: 'isantos@example.com',
-        github: 'icsantos',
-        twitter: '@isantos140',
-        location: 'Saint Peters, MO'
+$(function() {
+  'use strict';
+
+  var model = {
+    bio: {
+      name: 'Imelda Santos',
+      role: 'Web Developer',
+      contacts: {
+          mobile: '636-555-5555',
+          email: 'isantos@example.com',
+          github: 'icsantos',
+          twitter: '@isantos140',
+          location: 'Saint Peters, MO'
+      },
+      welcomeMessage: 'Mabuhay!',
+      skills: [
+          'HTML5',
+          'CSS3',
+          'JavaScript',
+          'jQuery',
+          'T-SQL',
+          'PL/SQL',
+          'C#'
+      ],
+      biopic: 'images/nene_mii_250x250.jpg'
+    }
+  };
+
+  var controller = {
+    init: function() {
+      view.renderBio(model.bio);
+    }
+  };
+
+  var view = {
+    template: {
+      headerName: '<h1 id="name">%data%</h1>',
+      headerRole: '<span>%data%</span><hr/>',
+      contact: '<li class="flex-item"><span class="orange-text">%contact%</span><span class="white-text">%data%</span></li>',
+      bioPic: '<img src="%data%" class="biopic">',
+      welcomeMsg: '<span class="welcome-message">%data%</span>',
+      skillsStart: '<h3 id="skillsH3">Skills at a Glance:</h3><ul id="skills" class="flex-box"></ul>',
+      skills: '<li class="flex-item"><span class="white-text">%data%</span></li>'
     },
-    welcomeMessage: 'Mabuhay!',
-    skills: [
-        'HTML5',
-        'CSS3',
-        'JavaScript',
-        'jQuery',
-        'T-SQL',
-        'PL/SQL',
-        'C#'
-    ],
-    biopic: 'images/nene_mii_250x250.jpg'
-};
+
+    icomoon: {
+      contacts: {
+        generic: '&#xe972;',
+        mobile: '&#xe958;',
+        email: '&#xea84;',
+        github: '&#xeab1;',
+        twitter: '&#xea91;',
+        location: '&#xe948;',
+        blog: '&#xeaba;'
+      }
+    },
+
+    renderBio: function (bio) {
+      $('#topContacts').before(view.template.headerName.replace('%data%', bio.name));
+      $('#topContacts').before(view.template.headerRole.replace('%data%', bio.role));
+      var contactData,
+        htmlText,
+        htmlEntity,
+        iconSpan,
+        pos;
+      Object.keys(bio.contacts).forEach(function (contactType) {
+        contactData = bio.contacts[contactType];
+        htmlText = view.template.contact.replace('%contact%', contactType) ;
+        htmlEntity = view.icomoon.contacts[contactType];
+        iconSpan = '<span class="contact-icon">' + htmlEntity + '</span>';
+        pos = htmlText.indexOf('<span class="orange-text">');
+        htmlText = htmlText.replace('%data%', contactData);
+        htmlText = htmlText.replace('orange-text', 'contact-text');
+        htmlText = htmlText.replace('white-text', 'contact-data');
+        htmlText = htmlText.slice(0, pos) + iconSpan + htmlText.slice(pos);
+        $('#topContacts, #footerContacts').append(htmlText);
+      });
+      $('#header').append(view.template.bioPic.replace('%data%', bio.biopic));
+      $('#header').append(view.template.welcomeMsg.replace('%data%', bio.welcomeMessage));
+      if (bio.skills.length > 0) {
+        var formattedSkillsStart = view.template.skillsStart.replace('id="skillsH3"', 'class="skillsH3"');
+        formattedSkillsStart = formattedSkillsStart.replace('class="flex-box"', 'class="skills flex-box"');
+        $('#header').append(formattedSkillsStart);
+        bio.skills.forEach(function (skill) {
+          $('#skills').append(view.template.skills.replace('%data%', skill).replace('white-text', 'skill-data'));
+        });
+      }
+    }
+  };
+
+  controller.init();
+}());
 
 var education = {
     schools: [{
@@ -139,63 +209,6 @@ var projects = {
     }]
 };
 
-var icomoon = {
-    contacts: {
-        generic: '&#xe972;',
-        mobile: '&#xe958;',
-        email: '&#xea84;',
-        github: '&#xeab1;',
-        twitter: '&#xea91;',
-        location: '&#xe948;',
-        blog: '&#xeaba;'
-    }
-};
-
-var HTMLStrings = {
-    contacts: {
-        generic: HTMLcontactGeneric,
-        mobile: HTMLmobile,
-        email: HTMLemail,
-        github: HTMLgithub,
-        twitter: HTMLtwitter,
-        location: HTMLlocation,
-        blog: HTMLblog
-    }
-};
-
-bio.display = function () {
-    'use strict';
-    $('#topContacts').before(HTMLheaderName.replace('%data%', bio.name));
-    $('#topContacts').before(HTMLheaderRole.replace('%data%', bio.role));
-    var contactData,
-        htmlText,
-        htmlEntity,
-        iconSpan,
-        pos;
-    Object.keys(bio.contacts).forEach(function (contactType) {
-        contactData = bio.contacts[contactType];
-        htmlText = HTMLStrings.contacts[contactType];
-        htmlEntity = icomoon.contacts[contactType];
-        iconSpan = '<span class="contact-icon">' + htmlEntity + '</span>';
-        pos = htmlText.indexOf('<span class="orange-text">');
-        htmlText = htmlText.replace('%data%', contactData);
-        htmlText = htmlText.replace('orange-text', 'contact-text');
-        htmlText = htmlText.replace('white-text', 'contact-data');
-        htmlText = htmlText.slice(0, pos) + iconSpan + htmlText.slice(pos);
-        $('#topContacts, #footerContacts').append(htmlText);
-    });
-    $('#header').append(HTMLbioPic.replace('%data%', bio.biopic));
-    $('#header').append(HTMLwelcomeMsg.replace('%data%', bio.welcomeMessage));
-    if (bio.skills.length > 0) {
-        var formattedSkillsStart = HTMLskillsStart.replace('id="skillsH3"', 'class="skillsH3"');
-        formattedSkillsStart = formattedSkillsStart.replace('class="flex-box"', 'class="skills flex-box"');
-        $('#header').append(formattedSkillsStart);
-        bio.skills.forEach(function (skill) {
-            $('#skills').append(HTMLskills.replace('%data%', skill).replace('white-text', 'skill-data'));
-        });
-    }
-};
-
 education.display = function () {
     'use strict';
     var formattedSchoolName,
@@ -269,7 +282,6 @@ $('div#letsConnect h2').addClass('footerh2').removeClass('orange').removeClass('
 $('div#mapDiv').addClass('mapDiv').append(googleMap);
 $('div#map').addClass('googleMap');
 
-bio.display();
 education.display();
 work.display();
 projects.display();
