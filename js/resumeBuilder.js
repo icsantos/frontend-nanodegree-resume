@@ -6,29 +6,104 @@ $(function() {
       name: 'Imelda Santos',
       role: 'Web Developer',
       contacts: {
-          mobile: '636-555-5555',
-          email: 'isantos@example.com',
-          github: 'icsantos',
-          twitter: '@isantos140',
-          location: 'Saint Peters, MO'
+        mobile: '636-555-5555',
+        email: 'isantos@example.com',
+        github: 'icsantos',
+        twitter: '@isantos140',
+        location: 'Saint Peters, MO'
       },
       welcomeMessage: 'Mabuhay!',
       skills: [
-          'HTML5',
-          'CSS3',
-          'JavaScript',
-          'jQuery',
-          'T-SQL',
-          'PL/SQL',
-          'C#'
+        'HTML5',
+        'CSS3',
+        'JavaScript',
+        'jQuery',
+        'T-SQL',
+        'PL/SQL',
+        'C#'
       ],
       biopic: 'images/nene_mii_250x250.jpg'
+    },
+    
+    education: {
+      schools: [{
+        name: 'University of the Philippines',
+        location: 'Quezon City, Philippines',
+        degree: 'BS',
+        majors: [
+            'Statistics'
+        ],
+        dates: 1982,
+        url: 'http://www.up.edu.ph/'
+      }, {
+        name: 'Ateneo De Manila University',
+        location: 'Makati, Philippines',
+        degree: 'Certificate',
+        majors: [
+            'C++ Programming'
+        ],
+        dates: 1996,
+        url: 'http://www.admu.edu.ph/'
+      }, {
+        name: 'Quilogy Learning Center',
+        location: 'Saint Charles, MO',
+        degree: 'Certificate',
+        majors: [
+            'Core Web Application Technologies with Microsoft Visual Studio 2005',
+            'Advanced Web Application Technologies with Microsoft Visual Studio 2005'
+        ],
+        dates: 2008,
+        url: 'http://www.quilogy.com'
+      }],
+      onlineCourses: [{
+        title: 'Introduction to C#',
+        school: 'Saint Charles Community College',
+        dates: 2008,
+        url: 'http://www.ed2go.com/online-courses/c-sharp-programming-introduction'
+      }, {
+        title: 'Introduction to ASP.NET',
+        school: 'Saint Charles Community College',
+        dates: 2008,
+        url: 'http://www.ed2go.com/online-courses/asp-net-introduction'
+      }, {
+        title: 'Introduction to HTML and CSS',
+        school: 'Udacity',
+        dates: 2015,
+        url: 'http://www.udacity.com/course/ud304'
+      }, {
+        title: 'Responsive Web Design Fundamentals',
+        school: 'Udacity',
+        dates: 2015,
+        url: 'http://www.udacity.com/course/ud893'
+      }, {
+        title: 'Responsive Images',
+        school: 'Udacity',
+        dates: 2015,
+        url: 'http://www.udacity.com/course/ud882'
+      }, {
+        title: 'How to Use Git and GitHub',
+        school: 'Udacity',
+        dates: 2015,
+        url: 'http://www.udacity.com/course/ud775'
+      }, {
+        title: 'JavaScript Basics',
+        school: 'Udacity',
+        dates: 2015,
+        url: 'http://www.udacity.com/course/ud804'
+      }, {
+        title: 'Introduction to jQuery',
+        school: 'Udacity',
+        dates: 2015,
+        url: 'http://www.udacity.com/course/ud245'
+      }]
     }
+    
   };
 
   var controller = {
     init: function() {
       view.renderBio(model.bio);
+      view.renderEducation(model.education);
     }
   };
 
@@ -40,7 +115,20 @@ $(function() {
       bioPic: '<img src="%data%" class="biopic">',
       welcomeMsg: '<span class="welcome-message">%data%</span>',
       skillsStart: '<h3 id="skillsH3">Skills at a Glance:</h3><ul id="skills" class="flex-box"></ul>',
-      skills: '<li class="flex-item"><span class="white-text">%data%</span></li>'
+      skills: '<li class="flex-item"><span class="white-text">%data%</span></li>',
+
+      schoolStart: '<div class="education-entry"></div>',
+      schoolName: '<a href="#">%data%',
+      schoolDegree: ' -- %data%</a>',
+      schoolDates: '<div class="date-text">%data%</div>',
+      schoolLocation: '<div class="location-text">%data%</div>',
+      schoolMajor: '<em><br>Major: %data%</em>',
+      
+      onlineClasses: '<h3>Online Classes</h3>',
+      onlineTitle: '<a href="#">%data%',
+      onlineSchool: ' - %data%</a>',
+      onlineDates: '<div class="date-text">%data%</div>',
+      onlineURL: '<br><a href="#">%data%</a>'
     },
 
     icomoon: {
@@ -85,84 +173,43 @@ $(function() {
           $('#skills').append(view.template.skills.replace('%data%', skill).replace('white-text', 'skill-data'));
         });
       }
+    },
+
+    renderEducation: function (education) {
+      var formattedSchoolName,
+        formattedSchoolDegree;
+      education.schools.forEach(function (school) {
+        formattedSchoolName = view.template.schoolName.replace('%data%', school.name);
+        formattedSchoolName = formattedSchoolName.replace('#', school.url);
+        formattedSchoolDegree = view.template.schoolDegree.replace('%data%', school.degree);
+        $('#education').append(view.template.schoolStart);
+        $('.education-entry:last').append(formattedSchoolName + formattedSchoolDegree);
+        $('.education-entry:last').append(view.template.schoolDates.replace('%data%', school.dates));
+        $('.education-entry:last').append(view.template.schoolLocation.replace('%data%', school.location));
+        school.majors.forEach(function (major) {
+          $('.education-entry:last').append(view.template.schoolMajor.replace('%data%', major));
+        });
+      });
+      if (education.onlineCourses.length > 0) {
+        var formattedTitle,
+          formattedSchool;
+        $('#education').append(view.template.onlineClasses);
+        education.onlineCourses.forEach(function (course) {
+          formattedTitle = view.template.onlineTitle.replace('%data%', course.title);
+          formattedTitle = formattedTitle.replace('#', course.url);
+          formattedSchool = view.template.onlineSchool.replace('%data%', course.school);
+          $('#education').append(view.template.schoolStart);
+          $('.education-entry:last').append(formattedTitle + formattedSchool);
+          $('.education-entry:last').append(view.template.onlineDates.replace('%data%', course.dates));
+          $('.education-entry:last').append('<br>');
+        });
+      }
     }
+
   };
 
   controller.init();
 }());
-
-var education = {
-    schools: [{
-        name: 'University of the Philippines',
-        location: 'Quezon City, Philippines',
-        degree: 'BS',
-        majors: [
-            'Statistics'
-        ],
-        dates: 1982,
-        url: 'http://www.up.edu.ph/'
-    }, {
-        name: 'Ateneo De Manila University',
-        location: 'Makati, Philippines',
-        degree: 'Certificate',
-        majors: [
-            'C++ Programming'
-        ],
-        dates: 1996,
-        url: 'http://www.admu.edu.ph/'
-    }, {
-        name: 'Quilogy Learning Center',
-        location: 'Saint Charles, MO',
-        degree: 'Certificate',
-        majors: [
-            'Core Web Application Technologies with Microsoft Visual Studio 2005',
-            'Advanced Web Application Technologies with Microsoft Visual Studio 2005'
-        ],
-        dates: 2008,
-        url: 'http://www.quilogy.com'
-    }],
-    onlineCourses: [{
-        title: 'Introduction to C#',
-        school: 'Saint Charles Community College',
-        dates: 2008,
-        url: 'http://www.ed2go.com/online-courses/c-sharp-programming-introduction'
-    }, {
-        title: 'Introduction to ASP.NET',
-        school: 'Saint Charles Community College',
-        dates: 2008,
-        url: 'http://www.ed2go.com/online-courses/asp-net-introduction'
-    }, {
-        title: 'Introduction to HTML and CSS',
-        school: 'Udacity',
-        dates: 2015,
-        url: 'http://www.udacity.com/course/ud304'
-    }, {
-        title: 'Responsive Web Design Fundamentals',
-        school: 'Udacity',
-        dates: 2015,
-        url: 'http://www.udacity.com/course/ud893'
-    }, {
-        title: 'Responsive Images',
-        school: 'Udacity',
-        dates: 2015,
-        url: 'http://www.udacity.com/course/ud882'
-    }, {
-        title: 'How to Use Git and GitHub',
-        school: 'Udacity',
-        dates: 2015,
-        url: 'http://www.udacity.com/course/ud775'
-    }, {
-        title: 'JavaScript Basics',
-        school: 'Udacity',
-        dates: 2015,
-        url: 'http://www.udacity.com/course/ud804'
-    }, {
-        title: 'Introduction to jQuery',
-        school: 'Udacity',
-        dates: 2015,
-        url: 'http://www.udacity.com/course/ud245'
-    }]
-};
 
 var work = {
     jobs: [{
@@ -209,39 +256,6 @@ var projects = {
     }]
 };
 
-education.display = function () {
-    'use strict';
-    var formattedSchoolName,
-        formattedSchoolDegree;
-    education.schools.forEach(function (school) {
-        formattedSchoolName = HTMLschoolName.replace('%data%', school.name);
-        formattedSchoolName = formattedSchoolName.replace('#', school.url);
-        formattedSchoolDegree = HTMLschoolDegree.replace('%data%', school.degree);
-        $('#education').append(HTMLschoolStart);
-        $('.education-entry:last').append(formattedSchoolName + formattedSchoolDegree);
-        $('.education-entry:last').append(HTMLschoolDates.replace('%data%', school.dates));
-        $('.education-entry:last').append(HTMLschoolLocation.replace('%data%', school.location));
-        school.majors.forEach(function (major) {
-            $('.education-entry:last').append(HTMLschoolMajor.replace('%data%', major));
-        });
-    });
-
-    if (education.onlineCourses.length > 0) {
-        var formattedTitle,
-            formattedSchool;
-        $('#education').append(HTMLonlineClasses);
-        education.onlineCourses.forEach(function (course) {
-            formattedTitle = HTMLonlineTitle.replace('%data%', course.title);
-            formattedTitle = formattedTitle.replace('#', course.url);
-            formattedSchool = HTMLonlineSchool.replace('%data%', course.school);
-            $('#education').append(HTMLschoolStart);
-            $('.education-entry:last').append(formattedTitle + formattedSchool);
-            $('.education-entry:last').append(HTMLonlineDates.replace('%data%', course.dates));
-            $('.education-entry:last').append('<br>');
-        });
-    }
-};
-
 work.display = function () {
     'use strict';
     var formattedWorkEmployer,
@@ -282,6 +296,5 @@ $('div#letsConnect h2').addClass('footerh2').removeClass('orange').removeClass('
 $('div#mapDiv').addClass('mapDiv').append(googleMap);
 $('div#map').addClass('googleMap');
 
-education.display();
 work.display();
 projects.display();
