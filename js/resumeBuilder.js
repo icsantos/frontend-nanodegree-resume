@@ -25,6 +25,31 @@ $(function() {
       biopic: 'images/nene_mii_250x250.jpg'
     },
     
+    work: {
+      jobs: [{
+        employer: 'www.xmoppet.org',
+        title: 'Web Developer',
+        location: 'Saint Peters, MO',
+        dates: '07/1998-present',
+        description: 'Volunteer work involving research and web content development. Administered the Musgrave Foundation mailing list for two years.  Performed research in behalf of Van Ness Films for their production of "Biography: Roddy McDowall: Hollywood' + "'" + 's Best Friend", which aired on the A&E network on October 8, 1998. Coordinated with the Motion Picture and Television Fund Foundation for a fund-raising effort towards the Roddy McDowall Memorial Rose Garden; helped raise $5,125 in two years, earning the Musgrave Foundation naming rights to a bench in the rose garden.',
+        url: 'http://www.xmoppet.org'
+      }, {
+        employer: 'Aspect Software',
+        title: 'Consultant',
+        location: 'Saint Charles, MO',
+        dates: '04/2008-present',
+        description: 'Using SQL Server Management Studio (SSMS), created and optimized Transact-SQL (T-SQL) scripts to return datasets for display in Dynamics CRM 2011 forms or for incremental loading of data from client systems into CRM databases.  Created reports using SQL Server Reporting Services (SSRS), Business Intelligence Development Studio (BIDS), T-SQL and Visual Basic.  Supported data load and extract applications by maintaining existing solutions and writing new projects using Visual C#, Visual C++, PL/SQL, XML, HTML, Python and Pervasive Map Designer.',
+        url: 'http://www.aspect.com/'
+      }, {
+        employer: 'RelayHealth',
+        title: 'Programmer Analyst',
+        location: 'Saint Louis, MO',
+        dates: '02/1998-12/2007',
+        description: 'Maintained the Electronic Remittance Advice (ERA) system, an Extract, Transform, Load (ETL) application written in Visual FoxPro with calls to Gawk scripts, using SQL to access and update data in SQL Server.  Maintained the Medical Billing and Accounts Receivable system, an application written in Clipper.',
+        url: 'http://www.relayhealth.com/'
+      }]
+    },
+
     education: {
       schools: [{
         name: 'University of the Philippines',
@@ -103,6 +128,7 @@ $(function() {
   var controller = {
     init: function() {
       view.renderBio(model.bio);
+      view.renderWork(model.work);
       view.renderEducation(model.education);
     }
   };
@@ -117,6 +143,13 @@ $(function() {
       skillsStart: '<h3 id="skillsH3">Skills at a Glance:</h3><ul id="skills" class="flex-box"></ul>',
       skills: '<li class="flex-item"><span class="white-text">%data%</span></li>',
 
+      workStart: '<div class="work-entry"></div>',
+      workEmployer: '<a href="#">%data%',
+      workTitle: ' - %data%</a>',
+      workDates: '<div class="date-text">%data%</div>',
+      workLocation: '<div class="location-text">%data%</div>',
+      workDescription: '<p><br>%data%</p>',
+      
       schoolStart: '<div class="education-entry"></div>',
       schoolName: '<a href="#">%data%',
       schoolDegree: ' -- %data%</a>',
@@ -143,7 +176,7 @@ $(function() {
       }
     },
 
-    renderBio: function (bio) {
+    renderBio: function(bio) {
       $('#topContacts').before(view.template.headerName.replace('%data%', bio.name));
       $('#topContacts').before(view.template.headerRole.replace('%data%', bio.role));
       var contactData,
@@ -175,7 +208,23 @@ $(function() {
       }
     },
 
-    renderEducation: function (education) {
+    renderWork: function(work) {
+      'use strict';
+      var formattedWorkEmployer,
+        formattedWorkTitle;
+      work.jobs.forEach(function (job) {
+        formattedWorkEmployer = view.template.workEmployer.replace('%data%', job.employer);
+        formattedWorkEmployer = formattedWorkEmployer.replace('#', job.url);
+        formattedWorkTitle = view.template.workTitle.replace('%data%', job.title);
+        $('#workExperience').append(view.template.workStart);
+        $('.work-entry:last').append(formattedWorkEmployer + formattedWorkTitle);
+        $('.work-entry:last').append(view.template.workDates.replace('%data%', job.dates));
+        $('.work-entry:last').append(view.template.workLocation.replace('%data%', job.location));
+        $('.work-entry:last').append(view.template.workDescription.replace('%data%', job.description));
+      });
+    },
+
+    renderEducation: function(education) {
       var formattedSchoolName,
         formattedSchoolDegree;
       education.schools.forEach(function (school) {
@@ -211,31 +260,6 @@ $(function() {
   controller.init();
 }());
 
-var work = {
-    jobs: [{
-        employer: 'www.xmoppet.org',
-        title: 'Web Developer',
-        location: 'Saint Peters, MO',
-        dates: '07/1998-present',
-        description: 'Volunteer work involving research and web content development. Administered the Musgrave Foundation mailing list for two years.  Performed research in behalf of Van Ness Films for their production of "Biography: Roddy McDowall: Hollywood' + "'" + 's Best Friend", which aired on the A&E network on October 8, 1998. Coordinated with the Motion Picture and Television Fund Foundation for a fund-raising effort towards the Roddy McDowall Memorial Rose Garden; helped raise $5,125 in two years, earning the Musgrave Foundation naming rights to a bench in the rose garden.',
-        url: 'http://www.xmoppet.org'
-    }, {
-        employer: 'Aspect Software',
-        title: 'Consultant',
-        location: 'Saint Charles, MO',
-        dates: '04/2008-present',
-        description: 'Using SQL Server Management Studio (SSMS), created and optimized Transact-SQL (T-SQL) scripts to return datasets for display in Dynamics CRM 2011 forms or for incremental loading of data from client systems into CRM databases.  Created reports using SQL Server Reporting Services (SSRS), Business Intelligence Development Studio (BIDS), T-SQL and Visual Basic.  Supported data load and extract applications by maintaining existing solutions and writing new projects using Visual C#, Visual C++, PL/SQL, XML, HTML, Python and Pervasive Map Designer.',
-        url: 'http://www.aspect.com/'
-    }, {
-        employer: 'RelayHealth',
-        title: 'Programmer Analyst',
-        location: 'Saint Louis, MO',
-        dates: '02/1998-12/2007',
-        description: 'Maintained the Electronic Remittance Advice (ERA) system, an Extract, Transform, Load (ETL) application written in Visual FoxPro with calls to Gawk scripts, using SQL to access and update data in SQL Server.  Maintained the Medical Billing and Accounts Receivable system, an application written in Clipper.',
-        url: 'http://www.relayhealth.com/'
-    }]
-};
-
 var projects = {
     projects: [{
         title: 'Front-End Nanodegree Project 1: Build a Portfolio',
@@ -254,22 +278,6 @@ var projects = {
             'images/fend2_laptop.jpg'
         ]
     }]
-};
-
-work.display = function () {
-    'use strict';
-    var formattedWorkEmployer,
-        formattedWorkTitle;
-    work.jobs.forEach(function (job) {
-        formattedWorkEmployer = HTMLworkEmployer.replace('%data%', job.employer);
-        formattedWorkEmployer = formattedWorkEmployer.replace('#', job.url);
-        formattedWorkTitle = HTMLworkTitle.replace('%data%', job.title);
-        $('#workExperience').append(HTMLworkStart);
-        $('.work-entry:last').append(formattedWorkEmployer + formattedWorkTitle);
-        $('.work-entry:last').append(HTMLworkDates.replace('%data%', job.dates));
-        $('.work-entry:last').append(HTMLworkLocation.replace('%data%', job.location));
-        $('.work-entry:last').append(HTMLworkDescription.replace('%data%', job.description));
-    });
 };
 
 projects.display = function () {
@@ -296,5 +304,4 @@ $('div#letsConnect h2').addClass('footerh2').removeClass('orange').removeClass('
 $('div#mapDiv').addClass('mapDiv').append(googleMap);
 $('div#map').addClass('googleMap');
 
-work.display();
 projects.display();
