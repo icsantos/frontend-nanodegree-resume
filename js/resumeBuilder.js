@@ -50,6 +50,26 @@ $(function() {
       }]
     },
 
+    projects: {
+      projects: [{
+        title: 'Front-End Nanodegree Project 1: Build a Portfolio',
+        dates: '04/18/2015 - 04/22/2015',
+        description: 'Replicate a design mockup in a responsive website using HTML5 and CSS3.',
+        url: 'https://github.com/icsantos/FEND-build-a-portfolio',
+        images: [
+            'images/fend1_laptop.jpg'
+        ]
+      }, {
+        title: 'Front-End Nanodegree Project 2: Online Resume',
+        dates: '05/07/2015 - present',
+        description: 'Demonstrate mastery of JavaScript and jQuery to design an online resume.',
+        url: 'https://github.com/icsantos/frontend-nanodegree-resume',
+        images: [
+            'images/fend2_laptop.jpg'
+        ]
+      }]
+    },
+
     education: {
       schools: [{
         name: 'University of the Philippines',
@@ -129,6 +149,7 @@ $(function() {
     init: function() {
       view.renderBio(model.bio);
       view.renderWork(model.work);
+      view.renderProjects(model.projects);
       view.renderEducation(model.education);
     }
   };
@@ -150,6 +171,12 @@ $(function() {
       workLocation: '<div class="location-text">%data%</div>',
       workDescription: '<p><br>%data%</p>',
       
+      projectStart: '<div class="project-entry"></div>',
+      projectTitle: '<a href="#">%data%</a>',
+      projectDates: '<div class="date-text">%data%</div>',
+      projectDescription: '<p><br>%data%</p>',
+      projectImage: '<img src="%data%">',
+
       schoolStart: '<div class="education-entry"></div>',
       schoolName: '<a href="#">%data%',
       schoolDegree: ' -- %data%</a>',
@@ -209,7 +236,6 @@ $(function() {
     },
 
     renderWork: function(work) {
-      'use strict';
       var formattedWorkEmployer,
         formattedWorkTitle;
       work.jobs.forEach(function (job) {
@@ -221,6 +247,21 @@ $(function() {
         $('.work-entry:last').append(view.template.workDates.replace('%data%', job.dates));
         $('.work-entry:last').append(view.template.workLocation.replace('%data%', job.location));
         $('.work-entry:last').append(view.template.workDescription.replace('%data%', job.description));
+      });
+    },
+
+    renderProjects: function(projects) {
+      var formattedProjectTitle;
+      projects.projects.forEach(function (project) {
+        formattedProjectTitle = view.template.projectTitle.replace('%data%', project.title);
+        formattedProjectTitle = formattedProjectTitle.replace('#', project.url);
+        $('#projects').append(view.template.projectStart);
+        $('.project-entry:last').append(formattedProjectTitle);
+        $('.project-entry:last').append(view.template.projectDates.replace('%data%', project.dates));
+        $('.project-entry:last').append(view.template.projectDescription.replace('%data%', project.description));
+        project.images.forEach(function (image) {
+          $('.project-entry:last').append(view.template.projectImage.replace('%data%', image));
+        });
       });
     },
 
@@ -260,42 +301,6 @@ $(function() {
   controller.init();
 }());
 
-var projects = {
-    projects: [{
-        title: 'Front-End Nanodegree Project 1: Build a Portfolio',
-        dates: '04/18/2015 - 04/22/2015',
-        description: 'Replicate a design mockup in a responsive website using HTML5 and CSS3.',
-        url: 'https://github.com/icsantos/FEND-build-a-portfolio',
-        images: [
-            'images/fend1_laptop.jpg'
-        ]
-    }, {
-        title: 'Front-End Nanodegree Project 2: Online Resume',
-        dates: '05/07/2015 - present',
-        description: 'Demonstrate mastery of JavaScript and jQuery to design an online resume.',
-        url: 'https://github.com/icsantos/frontend-nanodegree-resume',
-        images: [
-            'images/fend2_laptop.jpg'
-        ]
-    }]
-};
-
-projects.display = function () {
-    'use strict';
-    var formattedProjectTitle;
-    projects.projects.forEach(function (project) {
-        formattedProjectTitle = HTMLprojectTitle.replace('%data%', project.title);
-        formattedProjectTitle = formattedProjectTitle.replace('#', project.url);
-        $('#projects').append(HTMLprojectStart);
-        $('.project-entry:last').append(formattedProjectTitle);
-        $('.project-entry:last').append(HTMLprojectDates.replace('%data%', project.dates));
-        $('.project-entry:last').append(HTMLprojectDescription.replace('%data%', project.description));
-        project.images.forEach(function (image) {
-            $('.project-entry:last').append(HTMLprojectImage.replace('%data%', image));
-        });
-    });
-};
-
 $('div.dark-gray').addClass('dark-background').removeClass('dark-gray');
 $('div.gray').addClass('light-background').removeClass('gray');
 $('div#header').addClass('header');
@@ -303,5 +308,3 @@ $('div#letsConnect').addClass('footer');
 $('div#letsConnect h2').addClass('footerh2').removeClass('orange').removeClass('center-text');
 $('div#mapDiv').addClass('mapDiv').append(googleMap);
 $('div#map').addClass('googleMap');
-
-projects.display();
