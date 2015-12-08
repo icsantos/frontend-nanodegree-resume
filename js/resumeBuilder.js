@@ -24,7 +24,7 @@ $(function() {
       ],
       biopic: 'images/nene_mii_250x250.jpg'
     },
-    
+
     work: {
       jobs: [{
         employer: 'www.xmoppet.org',
@@ -141,16 +141,38 @@ $(function() {
         dates: 2015,
         url: 'http://www.udacity.com/course/ud245'
       }]
-    }
+    },
     
+    locationFinder: function() {
+      var locations = [];
+      var school, job;
+
+      // add the single location property from bio to the locations array
+      locations.push(model.bio.contacts.location);
+
+      // add each school location to the locations array
+      for (school in model.education.schools) {
+        locations.push(model.education.schools[school].location);
+      }
+
+      // add each work location to the locations array
+      for (job in model.work.jobs) {
+        locations.push(model.work.jobs[job].location);
+      }
+
+      return locations;
+    }
   };
 
   var controller = {
     init: function() {
+      view.init();
       view.renderBio(model.bio);
       view.renderWork(model.work);
       view.renderProjects(model.projects);
       view.renderEducation(model.education);
+      view.renderMap(model.locationFinder());
+      view.setEventHandlers();
     }
   };
 
@@ -170,7 +192,7 @@ $(function() {
       workDates: '<div class="date-text">%data%</div>',
       workLocation: '<div class="location-text">%data%</div>',
       workDescription: '<p><br>%data%</p>',
-      
+
       projectStart: '<div class="project-entry"></div>',
       projectTitle: '<a href="#">%data%</a>',
       projectDates: '<div class="date-text">%data%</div>',
@@ -183,12 +205,14 @@ $(function() {
       schoolDates: '<div class="date-text">%data%</div>',
       schoolLocation: '<div class="location-text">%data%</div>',
       schoolMajor: '<em><br>Major: %data%</em>',
-      
+
       onlineClasses: '<h3>Online Classes</h3>',
       onlineTitle: '<a href="#">%data%',
       onlineSchool: ' - %data%</a>',
       onlineDates: '<div class="date-text">%data%</div>',
-      onlineURL: '<br><a href="#">%data%</a>'
+      onlineURL: '<br><a href="#">%data%</a>',
+      
+      googleMap: '<div id="map"></div>'
     },
 
     icomoon: {
@@ -201,6 +225,16 @@ $(function() {
         location: '&#xe948;',
         blog: '&#xeaba;'
       }
+    },
+
+    init: function() {
+      $('div.dark-gray').addClass('dark-background').removeClass('dark-gray');
+      $('div.gray').addClass('light-background').removeClass('gray');
+      $('div#header').addClass('header');
+      $('div#letsConnect').addClass('footer');
+      $('div#letsConnect h2').addClass('footerh2').removeClass('orange').removeClass('center-text');
+      $('div#mapDiv').addClass('mapDiv').append(view.template.googleMap);
+      $('div#map').addClass('googleMap');
     },
 
     renderBio: function(bio) {
@@ -294,17 +328,108 @@ $(function() {
           $('.education-entry:last').append('<br>');
         });
       }
+    },
+    
+    map: {},
+    
+    // Generate the custom Google Map for the website
+    // https://developers.google.com/maps/documentation/javascript/reference
+    renderMap: function(locations) {
+      var mapOptions = {
+        disableDefaultUI: true
+      };
+      // Make a new Google Map JavaScript Object and attach it to <div id='map'>
+      view.map = new google.maps.Map(document.querySelector('#map'), mapOptions);
+      // Set the boundaries of the map based on pin locations
+      window.mapBounds = new google.maps.LatLngBounds();
+
+      view.pinPoster(locations);
+    },
+
+    /*
+      createMapMarker(placeData) reads Google Places search results to create map pins.
+      placeData is the object returned from search results containing information
+      about a single location.
+    */
+    createMapMarker: function(placeData) {
+
+      // The next lines save location data from the search result object to local variables
+      var lat = placeData.geometry.location.lat();  // latitude from the place service
+      var lon = placeData.geometry.location.lng();  // longitude from the place service
+      var name = placeData.formatted_address;   // name of the place from the place service
+      var bounds = window.mapBounds;            // current boundaries of the map window
+      
+      var country = $.trim(placeData.formatted_address.split(',').pop());
+      var image = 'images/icon_' + country + '.png';
+      $.get(image).fail(function() {
+        image = 'images/orange-dot.png';
+      });
+
+      // marker is an object with additional data about the pin for a single location
+      var marker = new google.maps.Marker({
+        map: view.map,
+        position: placeData.geometry.location,
+        title: name,
+        icon: image
+      });
+
+      // infoWindows are the little helper windows that open when you click
+      // or hover over a pin on a map. They usually contain more information
+      // about a location.
+      var infoWindow = new google.maps.InfoWindow({
+        content: name
+      });
+
+      // hmmmm, I wonder what this is about...
+      google.maps.event.addListener(marker, 'click', function() {
+        infoWindow.close();
+        infoWindow.open(view.map, marker);
+      });
+
+      // this is where the pin actually gets added to the map.
+      // bounds.extend() takes in a map location object
+      bounds.extend(new google.maps.LatLng(lat, lon));
+      // fit the map to the new marker
+      view.map.fitBounds(bounds);
+      // center the map
+      view.map.setCenter(bounds.getCenter());
+    },
+
+    // If the search returned results for a location, create a new map marker.
+    mapCallback: function(results, status) {
+      if (status == google.maps.places.PlacesServiceStatus.OK) {
+        view.createMapMarker(results[0]);
+      }
+    },
+
+    // Create pins on the map for each location in the locations array
+    pinPoster: function(locations) {
+      // Create a Google place search service object.
+      // PlacesService does the work of actually searching for location data.
+      var service = new google.maps.places.PlacesService(view.map);
+
+      // Iterate through the array of locations, creating a search object for each location
+      for (var place in locations) {
+
+        // the search request object
+        var request = {
+          query: locations[place]
+        };
+
+        // Actually searches the Google Maps API for location data and runs the callback
+        // function with the search results after each search.
+        service.textSearch(request, view.mapCallback);
+      }
+    },
+    
+    setEventHandlers: function() {
+      window.addEventListener('resize', function(e) {
+        // Make sure the map bounds get updated on page resize
+        view.map.fitBounds(mapBounds);
+      });
     }
 
   };
 
   controller.init();
 }());
-
-$('div.dark-gray').addClass('dark-background').removeClass('dark-gray');
-$('div.gray').addClass('light-background').removeClass('gray');
-$('div#header').addClass('header');
-$('div#letsConnect').addClass('footer');
-$('div#letsConnect h2').addClass('footerh2').removeClass('orange').removeClass('center-text');
-$('div#mapDiv').addClass('mapDiv').append(googleMap);
-$('div#map').addClass('googleMap');
