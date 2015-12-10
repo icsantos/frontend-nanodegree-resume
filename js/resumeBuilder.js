@@ -212,7 +212,8 @@ $(function() {
       onlineDates: '<div class="date-text">%data%</div>',
       onlineURL: '<br><a href="#">%data%</a>',
       
-      googleMap: '<div id="map"></div>'
+      googleMap: '<div id="map"></div>',
+      internationalizeButton: '<button>Internationalize</button>'
     },
 
     icomoon: {
@@ -422,13 +423,40 @@ $(function() {
       }
     },
     
+    // The next few lines about clicks are for the Collecting Click Locations quiz in Lesson 2
+    clickLocations: [],
+    
+    logClicks: function(x,y) {
+      view.clickLocations.push(
+        {
+          x: x,
+          y: y
+        }
+      );
+      console.log('x location: ' + x + '; y location: ' + y);
+    },
+    
     setEventHandlers: function() {
+      // Make sure the map bounds get updated on page resize
       window.addEventListener('resize', function(e) {
-        // Make sure the map bounds get updated on page resize
         view.map.fitBounds(mapBounds);
       });
+      
+      // for the Collecting Click Locations quiz in Lesson 2
+      $(document).click(function(loc) {
+        view.logClicks(loc.pageX, loc.pageY);
+      });
+      
+      // for the International Name challenge in Lesson 2 
+      // where you'll create a function that will need this helper code to run. 
+      // Don't delete! It hooks up your code to the button you'll be appending.
+      $(document).ready(function() {
+        $('button').click(function() {
+          var iName = inName() || function(){};
+          $('#name').html(iName);  
+        });
+      });
     }
-
   };
 
   controller.init();
